@@ -1,100 +1,71 @@
-// sga-frontend/src/App.js
-import React, { useState, useEffect } from 'react';
+// sga-frontend/src/App.js (REFATORADO)
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { checkAuthStatus } from './api/sgaApi';
+import { AuthProvider, useAuth } from './AuthContext';
 
-// Componentes Reutilizáveis
-import Navbar from './components/Navbar'; // 7. Componente Reutilizável
-import Footer from './components/Footer'; // 7. Componente Reutilizável
+// Componentes de Layout
+import Navbar from './components/Navbar';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
-// Páginas (Views)
+// Páginas
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 import Alunos from './pages/Alunos';
 import Cursos from './pages/Cursos';
+import Professores from './pages/Professores';
 
-// Componente para proteger rotas (Similar ao Middleware no Backend)
-const ProtectedRoute = ({ children, isAuthenticated }) => {
-    // Redireciona para o login se não estiver autenticado
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
-    return children;
+// Estilos
+// ATUALIZAR IMPORTS:
+import layoutStyles from './styles/components/Layout.module.css';
+
+// Proteção de rotas
+const PrivateRoute = ({ children }) => {
+  const { isLoggedIn, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="container text-center mt-4">
+        <div>Carregando...</div>
+      </div>
+    );
+  }
+
+  return isLoggedIn ? children : <Navigate to="/login" />;
 };
 
+const AppRoutes = () => (
+  <div className={layoutStyles.app}>
+    <Navbar />
+    <Header />
+    <main className={layoutStyles.content}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Rotas Protegidas */}
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/alunos" element={<PrivateRoute><Alunos /></PrivateRoute>} />
+        <Route path="/cursos" element={<PrivateRoute><Cursos /></PrivateRoute>} />
+        <Route path="/professores" element={<PrivateRoute><Professores /></PrivateRoute>} />
+
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </main>
+    <Footer />
+  </div>
+);
+
 function App() {
-    // Estado para armazenar informações do usuário logado 
-    const [user, setUser] = useState(null); // null: não checado, false: deslogado, object: logado
-    const [loading, setLoading] = useState(true);
-
-    // Efeito para checar o status de autenticação ao carregar a aplicação
-    useEffect(() => {
-        const verifyAuth = async () => {
-            const authData = await checkAuthStatus();
-            setUser(authData.isLoggedIn ? authData : false);
-            setLoading(false);
-        };
-        verifyAuth();
-    }, []);
-
-    if (loading) {
-        return (
-            <div style={{ padding: '50px', textAlign: 'center' }}>
-                <h2>Carregando sistema... ⌛</h2>
-                <p>Verificando autenticação...</p>
-            </div>
-        );
-    }
-
-    // Passamos o estado do usuário e a função para atualizá-lo para os componentes
-    const isAuthenticated = user && user.isLoggedIn;
-
-    return (
-        <Router>
-            <div className="App-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-                <Navbar user={user} setUser={setUser} isAuthenticated={isAuthenticated} />
-                
-                <main style={{ flexGrow: 1, padding: '20px' }}>
-                    <Routes>
-                        <Route path="/" element={<Home user={user} />} />
-                        
-                        {/* Rota de Login */}
-                        <Route path="/login" element={<Login setUser={setUser} />} />
-
-                        {/* Rotas Protegidas (requerem login) */}
-                        <Route 
-                            path="/alunos" 
-                            element={
-                                <ProtectedRoute isAuthenticated={isAuthenticated}>
-                                    <Alunos user={user} />
-                                </ProtectedRoute>
-                            } 
-                        />
-                        <Route 
-                            path="/cursos" 
-                            element={
-                                <ProtectedRoute isAuthenticated={isAuthenticated}>
-                                    <Cursos />
-                                </ProtectedRoute>
-                            } 
-                        />
-                        {/* Rota para edição (exemplo) */}
-                        <Route 
-                            path="/alunos/editar/:id" 
-                            element={
-                                <ProtectedRoute isAuthenticated={isAuthenticated}>
-                                    {/* Componente de formulário de edição irá aqui */}
-                                    <p>Página de Edição de Aluno...</p> 
-                                </ProtectedRoute>
-                            } 
-                        />
-                    </Routes>
-                </main>
-                
-                <Footer /> {/* 7. Componente Reutilizável */}
-            </div>
-        </Router>
-    );
+  return (
+    <Router>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </Router>
+  );
 }
 
 export default App;
