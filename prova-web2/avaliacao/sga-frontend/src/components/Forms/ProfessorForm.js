@@ -1,24 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
-import { createAluno, updateAluno, updateAlunoCourse } from '../../api/alunosApi'; 
+import { createProfessor, updateProfessor } from '../../api/professoresApi';
 import { fetchCursos } from '../../api/cursosApi';
 import formStyles from '../../styles/components/Forms.module.css';
 import buttonStyles from '../../styles/components/Buttons.module.css';
 
-const AlunoForm = ({ alunoParaEditar, onSuccess }) => {
-    const isEditing = !!alunoParaEditar;
-    
-    const [alunoData, setAlunoData] = useState({
-        nome: alunoParaEditar?.nome || '',
-        matricula: alunoParaEditar?.matricula || '',
-        data_nascimento: alunoParaEditar?.data_nascimento?.split('T')[0] || '',
-        curso_id: alunoParaEditar?.curso_id || '',
+const ProfessorForm = ({ professorParaEditar, onSuccess }) => {
+    const isEditing = !!professorParaEditar;
+
+    const [professorData, setProfessorData] = useState({
+        nome: professorParaEditar?.nome || '',
+        siape: professorParaEditar?.siape || '',
+        matricula: professorParaEditar?.matricula || '',
+        curso_id: professorParaEditar?.curso_id || '',
     });
+
     const [cursos, setCursos] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Carrega a lista de cursos para o <select>
+    // Carrega a lista de cursos
     useEffect(() => {
         const loadCursos = async () => {
             try {
@@ -33,7 +34,7 @@ const AlunoForm = ({ alunoParaEditar, onSuccess }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setAlunoData(prev => ({ ...prev, [name]: value }));
+        setProfessorData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -43,28 +44,22 @@ const AlunoForm = ({ alunoParaEditar, onSuccess }) => {
 
         try {
             if (isEditing) {
-                // Atualiza dados básicos do aluno
-                await updateAluno(alunoParaEditar.id, {
-                    nome: alunoData.nome,
-                    matricula: alunoData.matricula,
-                    data_nascimento: alunoData.data_nascimento,
-                });
-                
-                // Atualiza curso se mudou
-                if (alunoParaEditar.curso_id !== alunoData.curso_id) {
-                    await updateAlunoCourse(alunoParaEditar.id, { curso_id: alunoData.curso_id }); 
-                }
-
-                alert('Aluno atualizado com sucesso!');
+                await updateProfessor(professorParaEditar.id, professorData);
+                alert('✅ Professor atualizado com sucesso!');
             } else {
-                // Cadastra novo aluno
-                await createAluno(alunoData);
-                alert('Aluno cadastrado com sucesso!');
-                setAlunoData({ nome: '', matricula: '', data_nascimento: '', curso_id: '' });
+                await createProfessor(professorData);
+                alert('✅ Professor cadastrado com sucesso!');
+                setProfessorData({
+                    nome: '',
+                    siape: '',
+                    matricula: '',
+                    curso_id: '',
+                });
             }
             onSuccess();
         } catch (err) {
-            setError(err.message || 'Erro na operação.');
+            console.error(err);
+            setError(err.message || 'Erro ao salvar o professor. Verifique os dados.');
         } finally {
             setLoading(false);
         }
@@ -73,9 +68,9 @@ const AlunoForm = ({ alunoParaEditar, onSuccess }) => {
     return (
         <div className={formStyles.formContainer}>
             <h2 className={formStyles.formTitle}>
-                {isEditing ? '✏️ Editar Aluno' : '➕ Novo Aluno'}
+                {isEditing ? '✏️ Editar Professor' : '➕ Novo Professor'}
             </h2>
-            
+
             {error && <div className={formStyles.errorMessage}>{error}</div>}
 
             <form onSubmit={handleSubmit} className={loading ? formStyles.loading : ''}>
@@ -85,65 +80,67 @@ const AlunoForm = ({ alunoParaEditar, onSuccess }) => {
                         <label htmlFor="nome" className={formStyles.formLabel}>
                             Nome Completo *
                         </label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             id="nome"
-                            name="nome" 
+                            name="nome"
                             className={formStyles.formInput}
-                            value={alunoData.nome} 
-                            onChange={handleChange} 
-                            required 
+                            value={professorData.nome}
+                            onChange={handleChange}
+                            required
                             disabled={loading}
-                            placeholder="Digite o nome completo do aluno"
+                            placeholder="Digite o nome completo do professor"
                         />
                     </div>
-                    
+
+                    {/* Campo SIAPE */}
+                    <div className={formStyles.formGroup}>
+                        <label htmlFor="siape" className={formStyles.formLabel}>
+                            SIAPE *
+                        </label>
+                        <input
+                            type="text"
+                            id="siape"
+                            name="siape"
+                            className={formStyles.formInput}
+                            value={professorData.siape}
+                            onChange={handleChange}
+                            required
+                            disabled={loading}
+                            placeholder="Número do SIAPE"
+                        />
+                    </div>
+
                     {/* Campo Matrícula */}
                     <div className={formStyles.formGroup}>
                         <label htmlFor="matricula" className={formStyles.formLabel}>
                             Matrícula *
                         </label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             id="matricula"
-                            name="matricula" 
+                            name="matricula"
                             className={formStyles.formInput}
-                            value={alunoData.matricula} 
-                            onChange={handleChange} 
-                            required 
+                            value={professorData.matricula}
+                            onChange={handleChange}
+                            required
                             disabled={loading}
                             placeholder="Número de matrícula"
-                        />
-                    </div>
-                    
-                    {/* Campo Data de Nascimento */}
-                    <div className={formStyles.formGroup}>
-                        <label htmlFor="data_nascimento" className={formStyles.formLabel}>
-                            Data de Nascimento
-                        </label>
-                        <input 
-                            type="date" 
-                            id="data_nascimento"
-                            name="data_nascimento" 
-                            className={formStyles.formInput}
-                            value={alunoData.data_nascimento} 
-                            onChange={handleChange} 
-                            disabled={loading}
                         />
                     </div>
 
                     {/* Campo Curso */}
                     <div className={formStyles.formGroup}>
                         <label htmlFor="curso_id" className={formStyles.formLabel}>
-                            Curso *
+                            Curso Principal *
                         </label>
-                        <select 
+                        <select
                             id="curso_id"
-                            name="curso_id" 
+                            name="curso_id"
                             className={formStyles.formSelect}
-                            value={alunoData.curso_id} 
-                            onChange={handleChange} 
-                            required 
+                            value={professorData.curso_id}
+                            onChange={handleChange}
+                            required
                             disabled={loading}
                         >
                             <option value="">Selecione um curso</option>
@@ -165,12 +162,12 @@ const AlunoForm = ({ alunoParaEditar, onSuccess }) => {
                     >
                         Cancelar
                     </button>
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         className={`${buttonStyles.button} ${buttonStyles.primary}`}
                         disabled={loading}
                     >
-                        {loading ? 'Salvando...' : (isEditing ? 'Salvar Alterações' : 'Cadastrar Aluno')}
+                        {loading ? 'Salvando...' : (isEditing ? 'Salvar Alterações' : 'Cadastrar Professor')}
                     </button>
                 </div>
             </form>
@@ -178,4 +175,4 @@ const AlunoForm = ({ alunoParaEditar, onSuccess }) => {
     );
 };
 
-export default AlunoForm;
+export default ProfessorForm;

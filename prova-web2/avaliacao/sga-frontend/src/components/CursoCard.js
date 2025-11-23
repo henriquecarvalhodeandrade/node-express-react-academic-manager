@@ -2,34 +2,37 @@
 import cardStyles from '../styles/components/Cards.module.css';
 import buttonStyles from '../styles/components/Buttons.module.css';
 
-const AlunoCard = ({ aluno, onDelete, onEdit }) => {
+const CursoCard = ({ curso, onDelete, onEdit }) => {
     return (
         <div className={cardStyles.entityCard}>
             <div className={cardStyles.entityCardHeader}>
                 <div>
                     <h3 className={cardStyles.entityCardTitle}>
-                        👨‍🎓 {aluno.nome}
+                        📚 {curso.nome_curso}
                     </h3>
-                    <p className={cardStyles.entityCardSubtitle}>
-                        Matrícula: {aluno.matricula}
-                    </p>
                 </div>
             </div>
             
             <div className={cardStyles.entityCardContent}>
-                <p><strong>Curso:</strong> {aluno.nome_curso || 'Não Associado'}</p>
-                <p><strong>Data Nasc:</strong> {aluno.data_nascimento}</p>
+                <div className={cardStyles.entityCardMeta}>
+                    <div className={cardStyles.metaItem}>
+                        <strong>ID:</strong> {curso.id}
+                    </div>
+                    <div className={cardStyles.metaItem}>
+                        <strong>Carga Horária:</strong> {curso.carga_horaria} horas
+                    </div>
+                </div>
             </div>
             
             <div className={cardStyles.entityCardActions}>
-                <button 
-                    onClick={() => onEdit(aluno.id)} 
+                <button
+                    onClick={() => onEdit(curso.id)}
                     className={`${buttonStyles.button} ${buttonStyles.outline} ${buttonStyles.small}`}
                 >
                     ✏️ Editar
                 </button>
-                <button 
-                    onClick={() => onDelete(aluno.id)} 
+                <button
+                    onClick={() => onDelete(curso.id)}
                     className={`${buttonStyles.button} ${buttonStyles.danger} ${buttonStyles.small}`}
                 >
                     🗑️ Excluir
@@ -39,4 +42,4 @@ const AlunoCard = ({ aluno, onDelete, onEdit }) => {
     );
 };
 
-export default AlunoCard;
+export default CursoCard;

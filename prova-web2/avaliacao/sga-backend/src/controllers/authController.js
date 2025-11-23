@@ -1,12 +1,12 @@
-// sga-backend/src/controllers/authController.js
+
 const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 
-// 1. Cadastro de Usuário (CRUD - Create)
+// 1. Cadastro de Usuário 
 const register = async (req, res) => {
     const { nome, email, senha } = req.body;
     try {
-        // 5. Criptografar Senha [cite: 1404, 1536]
+        // 5. Criptografar Senha
         const hashedPassword = await bcrypt.hash(senha, 10);
         
         const newUser = await userModel.create(nome, email, hashedPassword);
@@ -25,25 +25,32 @@ const register = async (req, res) => {
 
 // 2. Login de Usuário
 const login = async (req, res) => {
-    const { email, senha } = req.body;
+    
+    const { email, senha: senhaInput } = req.body; 
     try {
         const user = await userModel.findByEmail(email);
 
-        // Verifica se o usuário existe
+        // 1. Loga a senha e o hash recuperado
+        console.log('Senha digitada (texto puro):', senhaInput); 
+        console.log('Hash do DB:', user ? user.senha : 'Usuário não encontrado'); 
+        
         if (!user) {
             return res.status(401).json({ erro: 'Credenciais inválidas.' });
         }
 
-        // 5. Compara a senha digitada com o hash salvo [cite: 1538, 1590]
-        const passwordMatch = await bcrypt.compare(senha, user.senha);
+        // 5. Compara a senha digitada (senhaInput) com o hash salvo (user.senha)
+        const passwordMatch = await bcrypt.compare(senhaInput, user.senha); 
+        
+        // 2. Loga o resultado da comparação
+        console.log('Resultado da comparação (passwordMatch):', passwordMatch); 
 
         if (!passwordMatch) {
             return res.status(401).json({ erro: 'Credenciais inválidas.' });
         }
 
-        // 5. Criação de Sessão (login de sucesso) [cite: 1318, 1592]
+        // 5. Criação de Sessão (login de sucesso)
         req.session.userId = user.id;
-        req.session.nome = user.nome; // Adiciona nome para exibição no frontend
+        req.session.nome = user.nome; 
 
         res.json({ message: 'Login realizado com sucesso!', nome: user.nome, userId: user.id });
 
@@ -55,20 +62,20 @@ const login = async (req, res) => {
 
 // 3. Logout de Usuário (5. Destruição de Sessão)
 const logout = (req, res) => {
-    // 5. Destrói a sessão [cite: 1381, 1387, 1624]
+    
     req.session.destroy(err => {
         if (err) {
             console.error('Erro ao destruir sessão:', err);
             return res.status(500).json({ erro: 'Erro ao fazer logout.' });
         }
-        res.clearCookie('connect.sid'); // Limpa o cookie da sessão
+        res.clearCookie('connect.sid'); 
         res.json({ message: 'Logout realizado com sucesso.' });
     });
 };
 
 // 3. Exibir dados de um usuário logado (CRUD - Read)
 const getLoggedInUser = (req, res) => {
-    // req.session.userId foi definido no login e verificado pelo authMiddleware
+    
     if (req.session.userId && req.session.nome) {
         return res.json({ 
             isLoggedIn: true, 
@@ -76,7 +83,7 @@ const getLoggedInUser = (req, res) => {
             nome: req.session.nome 
         });
     }
-    // O authMiddleware já trata o caso de não logado
+    
     res.status(401).json({ isLoggedIn: false, erro: 'Nenhum usuário logado.' });
 };
 

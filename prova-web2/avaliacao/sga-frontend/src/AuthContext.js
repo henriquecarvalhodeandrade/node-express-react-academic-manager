@@ -1,4 +1,3 @@
-// sga-frontend/src/AuthContext.js
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { 
@@ -6,7 +5,7 @@ import {
     login as apiLogin, 
     logout as apiLogout, 
     register as apiRegister 
-} from './api/authApi'; // Deve ser './api/authApi'
+} from './api/authApi'; 
 
 const AuthContext = createContext();
 
@@ -20,20 +19,20 @@ export const AuthProvider = ({ children }) => {
     // Função que verifica o status de autenticação (usada na inicialização)
     const verifyAuthStatus = async () => {
         try {
-            const response = await checkAuthStatus(); // 'response' é agora { isLoggedIn, userId, nome }
-            if (response.isLoggedIn) { // ✅ CORRIGIDO (removida a propriedade '.data')
+            const response = await checkAuthStatus(); 
+            if (response.isLoggedIn) { 
                 setIsLoggedIn(true);
                 setUser({ 
                     userId: response.userId, 
                     nome: response.nome 
                 });
         } else {
-                // Caso a API retorne 200, mas diga que não está logado
+                
                 setIsLoggedIn(false);
                 setUser(null);
             }
         } catch (error) {
-            // O erro 401 é esperado se não houver sessão ativa.
+            
             if (error.response && error.response.status === 401) {
                 console.log("Sessão não encontrada ou expirada (esperado).");
             } else {
@@ -50,15 +49,15 @@ export const AuthProvider = ({ children }) => {
         verifyAuthStatus();
     }, []);
 
-    // sga-frontend/src/AuthContext.js - Função login
+    // Função login
     const login = async (email, senha) => {
         setLoading(true);
         try {
-            const response = await apiLogin(email, senha); // 'response' é agora { message, nome, userId }
+            const response = await apiLogin(email, senha); 
             setIsLoggedIn(true);
             setUser({ 
-                userId: response.userId, // ✅ CORRIGIDO
-                nome: response.nome      // ✅ CORRIGIDO
+                userId: response.userId, 
+                nome: response.nome      
             });
             return { success: true };
         } catch (error) {
@@ -77,7 +76,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         setLoading(true);
         try {
-            await apiLogout(); // POST /api/auth/logout
+            await apiLogout(); 
             setIsLoggedIn(false);
             setUser(null);
         } catch (error) {
@@ -87,16 +86,16 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // sga-frontend/src/AuthContext.js - Função register
+    // Função register
     const register = async (nome, email, senha) => {
         setLoading(true);
         try {
-            const response = await apiRegister(nome, email, senha); // 'response' é agora { id, nome, message }
-            // Assumimos que o registro faz o login automaticamente (como no seu authController)
+            const response = await apiRegister(nome, email, senha);
+            
             setIsLoggedIn(true);
             setUser({ 
-                userId: response.id,   // ✅ CORRIGIDO (usando 'response.id')
-                nome: response.nome    // ✅ CORRIGIDO
+                userId: response.id,  
+                nome: response.nome    
             });
             return { success: true };
         } catch (error) {

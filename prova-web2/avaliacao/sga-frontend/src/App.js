@@ -1,4 +1,4 @@
-// sga-frontend/src/App.js (REFATORADO)
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
 
@@ -17,7 +17,6 @@ import Cursos from './pages/Cursos';
 import Professores from './pages/Professores';
 
 // Estilos
-// ATUALIZAR IMPORTS:
 import layoutStyles from './styles/components/Layout.module.css';
 
 // Proteção de rotas

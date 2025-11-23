@@ -1,25 +1,90 @@
-// sga-frontend/src/pages/Home.js
-import React from 'react';
 
-const Home = ({ user }) => {
-    const nomeUsuario = user && user.nome ? user.nome : 'Visitante';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
+import homeStyles from '../styles/pages/Home.module.css';
+import buttonStyles from '../styles/components/Buttons.module.css';
+
+const Home = () => {
+    const { isLoggedIn, nome } = useAuth();
     
+    const features = [
+        {
+            icon: '👨‍🎓',
+            title: 'Gerenciar Alunos',
+            description: 'Cadastre, edite e visualize informações completas dos alunos de forma organizada.'
+        },
+        {
+            icon: '📚',
+            title: 'Gerenciar Cursos',
+            description: 'Crie e administre cursos, definindo carga horária e outras informações importantes.'
+        },
+        {
+            icon: '🧑‍🏫',
+            title: 'Gerenciar Professores',
+            description: 'Controle o cadastro de professores e suas atribuições aos cursos.'
+        }
+    ];
+
     return (
-        <div style={{ textAlign: 'center', padding: '50px', backgroundColor: '#e9ecef', borderRadius: '8px' }}>
-            <h1 style={{ color: '#0056b3' }}>Bem-vindo ao Sistema de Gerenciamento Acadêmico (SGA) 🏫</h1>
-            <p style={{ fontSize: '1.2em', marginBottom: '30px' }}>
-                Olá, **{nomeUsuario}**! Utilize o menu de navegação para gerenciar alunos e cursos.
-            </p>
-            
-            {!user || !user.isLoggedIn ? (
-                <p>
-                    <a href="/login" style={{ fontSize: '1.1em', color: '#28a745', textDecoration: 'none', fontWeight: 'bold' }}>
-                        Faça login para acessar as funcionalidades de gestão (Alunos e Cursos).
-                    </a>
-                </p>
-            ) : (
-                <p style={{ color: '#007bff' }}>Você está autenticado e pronto para começar.</p>
+        <div className="container">
+            {/* Hero Section - SOMENTE quando não está logado */}
+            {!isLoggedIn && (
+                <section className={homeStyles.hero}>
+                    <h1 className={homeStyles.heroTitle}>
+                        Sistema de Gerenciamento Acadêmico 🎓
+                    </h1>
+                    <p className={homeStyles.heroSubtitle}>
+                        Gerencie alunos, cursos e professores de forma eficiente e moderna
+                    </p>
+                    
+                    <div className={homeStyles.heroActions}>
+                        <Link 
+                            to="/login" 
+                            className={`${buttonStyles.button} ${buttonStyles.outline} ${buttonStyles.large}`}
+                            style={{ color: 'white', borderColor: 'white' }}
+                        >
+                            🔐 Fazer Login
+                        </Link>
+                        <Link 
+                            to="/register" 
+                            className={`${buttonStyles.button} ${buttonStyles.primary} ${buttonStyles.large}`}
+                            style={{ background: 'white', color: 'var(--primary-color)' }}
+                        >
+                            ✍️ Cadastre-se
+                        </Link>
+                    </div>
+                </section>
             )}
+
+            {/* Welcome Section para usuários logados */}
+            {isLoggedIn && (
+                <section className={homeStyles.welcomeSection}>
+                    <h2>Bem-vindo de volta, {nome || 'Usuário'}! 👋</h2>
+                    <p className={homeStyles.welcomeText}>
+                        Você está autenticado e pronto para começar a gerenciar o sistema.
+                    </p>
+                    <Link 
+                        to="/dashboard" 
+                        className={`${buttonStyles.button} ${buttonStyles.primary} ${buttonStyles.large}`}
+                    >
+                        📊 Acessar Painel
+                    </Link>
+                </section>
+            )}
+
+            {/* Features Section - MOSTRAR SEMPRE */}
+            <section className={homeStyles.features}>
+                <h2 className="text-center mb-4">Recursos Principais</h2>
+                <div className={homeStyles.featuresGrid}>
+                    {features.map((feature, index) => (
+                        <div key={index} className={homeStyles.featureCard}>
+                            <div className={homeStyles.featureIcon}>{feature.icon}</div>
+                            <h3 className={homeStyles.featureTitle}>{feature.title}</h3>
+                            <p className={homeStyles.featureDescription}>{feature.description}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
         </div>
     );
 };

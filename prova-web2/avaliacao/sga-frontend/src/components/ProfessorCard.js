@@ -2,34 +2,33 @@
 import cardStyles from '../styles/components/Cards.module.css';
 import buttonStyles from '../styles/components/Buttons.module.css';
 
-const AlunoCard = ({ aluno, onDelete, onEdit }) => {
+const ProfessorCard = ({ professor, onDelete, onEdit }) => {
     return (
         <div className={cardStyles.entityCard}>
             <div className={cardStyles.entityCardHeader}>
                 <div>
                     <h3 className={cardStyles.entityCardTitle}>
-                        👨‍🎓 {aluno.nome}
+                        🧑‍🏫 {professor.nome}
                     </h3>
                     <p className={cardStyles.entityCardSubtitle}>
-                        Matrícula: {aluno.matricula}
+                        SIAPE: {professor.siape} | Matrícula: {professor.matricula || 'N/A'}
                     </p>
                 </div>
             </div>
             
             <div className={cardStyles.entityCardContent}>
-                <p><strong>Curso:</strong> {aluno.nome_curso || 'Não Associado'}</p>
-                <p><strong>Data Nasc:</strong> {aluno.data_nascimento}</p>
+                <p><strong>Curso Principal:</strong> {professor.nome_curso || 'Não Definido'}</p>
             </div>
             
             <div className={cardStyles.entityCardActions}>
                 <button 
-                    onClick={() => onEdit(aluno.id)} 
+                    onClick={() => onEdit(professor.id)} 
                     className={`${buttonStyles.button} ${buttonStyles.outline} ${buttonStyles.small}`}
                 >
-                    ✏️ Editar
+                    ✏️ Editar Dados
                 </button>
                 <button 
-                    onClick={() => onDelete(aluno.id)} 
+                    onClick={() => onDelete(professor.id)} 
                     className={`${buttonStyles.button} ${buttonStyles.danger} ${buttonStyles.small}`}
                 >
                     🗑️ Excluir
@@ -39,4 +38,4 @@ const AlunoCard = ({ aluno, onDelete, onEdit }) => {
     );
 };
 
-export default AlunoCard;
+export default ProfessorCard;

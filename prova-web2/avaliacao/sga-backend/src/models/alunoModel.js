@@ -1,5 +1,4 @@
 
-// sga-backend/src/models/alunoModel.js
 const db = require('../config/db');
 
 // 1. Cadastro de Aluno (CRUD - Create)
@@ -11,7 +10,7 @@ const create = async (nome, matricula, curso_id, data_nascimento) => {
     return { id: result.insertId, nome, matricula, curso_id };
 };
 
-// 3. Consulta: Listar todos os alunos COM o nome do curso (JOIN)
+// 2. Consulta: Listar todos os alunos COM o nome do curso (JOIN)
 const findAllWithCourse = async () => {
     const [rows] = await db.query(`
         SELECT 
@@ -24,11 +23,17 @@ const findAllWithCourse = async () => {
         FROM alunos a
         LEFT JOIN cursos c ON a.curso_id = c.id
         ORDER BY a.nome
-    `); // 3. Consulta com Junção (JOIN) [cite: 1910]
+    `); 
     return rows;
 };
 
-// 2. Edição: Atualizar dados de um aluno (CRUD - Update)
+// 2.1 Consulta: Listar aluno COM o id específico
+const findById = async (id) => {
+    const [rows] = await db.query('SELECT * FROM alunos WHERE id = ?', [id]);
+    return rows[0]; 
+};
+
+// 3. Edição: Atualizar dados de um aluno (CRUD - Update)
 const update = async (id, nome, matricula, data_nascimento) => {
     const [result] = await db.query(
         'UPDATE alunos SET nome = ?, matricula = ?, data_nascimento = ? WHERE id = ?',
@@ -37,11 +42,11 @@ const update = async (id, nome, matricula, data_nascimento) => {
     return result.affectedRows > 0;
 };
 
-// 2. Edição: Alterar o curso de um aluno (Relacionamento - Chave Estrangeira)
+// 3.1 Edição: Alterar o curso de um aluno (Relacionamento - Chave Estrangeira)
 const updateCourse = async (alunoId, novoCursoId) => {
     const [result] = await db.query(
         'UPDATE alunos SET curso_id = ? WHERE id = ?',
-        [novoCursoId, alunoId] // 2. Edição com Chave Estrangeira
+        [novoCursoId, alunoId] 
     );
     return result.affectedRows > 0;
 };
@@ -52,22 +57,6 @@ const remove = async (id) => {
     return result.affectedRows > 0;
 };
 
-module.exports = {
-    create,
-    findAllWithCourse,
-    update,
-    updateCourse,
-    remove,
-};
-
-// sga-backend/src/models/alunoModel.js (Adição)
-// ... (código existente)
-
-// Busca um aluno pelo ID
-const findById = async (id) => {
-    const [rows] = await db.query('SELECT * FROM alunos WHERE id = ?', [id]);
-    return rows[0]; 
-};
 
 module.exports = {
     create,
@@ -75,5 +64,5 @@ module.exports = {
     update,
     updateCourse,
     remove,
-    findById, // Exportar o novo método
+    findById, 
 };

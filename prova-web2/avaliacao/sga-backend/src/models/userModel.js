@@ -1,11 +1,10 @@
-
-// sga-backend/src/models/userModel.js
+// arquivo não utilizados
 const db = require('../config/db');
 
 // Busca um usuário pelo email
 const findByEmail = async (email) => {
     const [rows] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
-    return rows[0]; // Retorna o primeiro usuário encontrado (ou undefined)
+    return rows[0]; 
 };
 
 // Cria um novo usuário
