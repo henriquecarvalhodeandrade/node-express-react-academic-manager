@@ -1,10 +1,11 @@
 
+import { useLocation } from 'react-router-dom';
 import layoutStyles from '../styles/components/Layout.module.css';
 
 const Header = () => {
     const location = useLocation();
 
-    // Não mostrar Header na página Home
+   
     if (location.pathname === '/') {
         return null;
     }
@@ -13,7 +14,7 @@ const Header = () => {
         '/dashboard': 'Painel de Controle 🏫',
         '/alunos': 'Gerenciamento de Alunos 👨‍🎓',
         '/cursos': 'Gerenciamento de Cursos 📚',
-        '/professores': 'Gerenciamento de Professores 🧑‍🏫',
+        '/professores': 'Gerenciamento de Professores 🧑‍🏫',  
         '/login': 'Acesso ao Sistema 🔐',
         '/register': 'Cadastro de Usuário ✍️',
     };
