@@ -77,3 +77,11 @@ O sistema utiliza as seguintes tabelas:
     npm install
     npm start
 2) A aplicação estará disponível em http://localhost:3000.
+
+## Resultados do Projeto
+
+Confira abaixo uma demonstração das principais funcionalidades do sistema:
+
+[![Assista ao vídeo](https://img.youtube.com/vi/lvUyLPJnfcs/0.jpg)](https://www.youtube.com/watch?v=lvUyLPJnfcs)
+
+> [Clique aqui para assistir à demonstração no YouTube](https://www.youtube.com/watch?v=lvUyLPJnfcs)
