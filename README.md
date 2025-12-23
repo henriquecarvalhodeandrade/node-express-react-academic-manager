@@ -45,7 +45,7 @@ O sistema utiliza as seguintes tabelas:
 
 ## Equipe de Desenvolvimento
 
-* Carlos Moreira - [LinkedIn](https://www.linkedin.com/in/carlos-henrique-moreira-gon%C3%A7alves-b2720b323/)
+* Carlos Moreira - [GitHub](https://github.com/ChMoreiraa)
 * Guilherme A. F. Ribeiro - [GitHub](https://github.com/guifrazao)
 * Gustavo Alves  - [GitHub](https://github.com/SantosGAlves)
 * Henrique C. de Andrade   - [GitHub](https://github.com/henriquecarvalhodeandrade)
