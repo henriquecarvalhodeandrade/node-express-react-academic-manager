@@ -14,6 +14,10 @@ const professorRoutes = require('./src/routes/professorRoutes');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Necessário para que cookies secure funcionem corretamente atrás do
+// reverse proxy do Render (que faz HTTPS termination antes de chegar ao Express)
+app.set('trust proxy', 1);
+
 
 // Em produção, FRONTEND_URL deve ser a URL do Vercel (ex: https://sga.vercel.app)
 // Em desenvolvimento, usa localhost:3000 como fallback
