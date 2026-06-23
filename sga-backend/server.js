@@ -15,9 +15,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 
+// Em produção, FRONTEND_URL deve ser a URL do Vercel (ex: https://sga.vercel.app)
+// Em desenvolvimento, usa localhost:3000 como fallback
 app.use(cors({
-    origin: 'http://localhost:3000', 
-    credentials: true 
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true
 }));
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
